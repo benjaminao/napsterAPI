@@ -2,9 +2,11 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var request = require('request');
 var querystring = require('querystring');
+var handlebars = require('handlebars');
 
-var apiKey = 'API_KEY';
-var apiSecret = 'API_SECRET';
+
+var apiKey = 'NmQ4NmRiYWQtM2NkMS00MDcwLWJjZTYtODUyNjg0YTI3ODVk';
+var apiSecret = 'YTE3NTNjM2ItNjBlZi00MzUwLWExNTktNDUwOGMzNWFmMTg0';
 
 var port = 2000;
 var baseUrl = 'http://localhost:' + port;
@@ -22,11 +24,14 @@ app.get('/', function(request, response) {
     client_id: apiKey,
     redirect_uri: redirectUri
   });
-
+  console.log("********************************************");
+  console.log(path);
   response.redirect(path);
 });
 
 app.get('/authorize', function(clientRequest, clientResponse) {
+  console.log('hit authorize');
+  console.log(clientRequest.query);
   request.post({
     url: 'https://api.napster.com/oauth/access_token',
     form: {
@@ -38,7 +43,11 @@ app.get('/authorize', function(clientRequest, clientResponse) {
       grant_type: 'authorization_code'
     }
   }, function(error, response, body) {
+    console.log('original body: ');
+    console.log(body);
     body = JSON.parse(body);
+    console.log('body: ');
+    console.log(body);
     clientResponse.redirect(baseUrl + '/client.html?' + querystring.stringify({
       accessToken: body.access_token,
       refreshToken: body.refresh_token
